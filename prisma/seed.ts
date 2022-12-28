@@ -1,7 +1,7 @@
 import { db } from "../src/configuration/data.source.configuration";
 
 async function seed() {
-  await Promise.all(
+  const authors = await Promise.all(
     getAuthors().map((author) => {
       const { firstName, lastName, country } = author;
       return db.author.create({
@@ -10,12 +10,18 @@ async function seed() {
           lastName,
           country,
         },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          country: true,
+        }
       });
     })
   );
 
   await Promise.all(
-    getBooks().map((book) => {
+    getBooks(authors).map((book) => {
       const { title, amountOfPages, datePublished, frontCover, authorId, description } = book;
       return db.book.create({
         data: {
@@ -53,14 +59,14 @@ function getAuthors(): Array<Author> {
   ];
 }
 
-function getBooks(): Array<Book> {
+function getBooks(authors: AuthorResponse[]): Array<Book> {
   return [
     {
       title: "Sapiens",
       description: "1",
       amountOfPages: 12,
       frontCover: "12",
-      authorId: 1,
+      authorId: authors[0].id,
       datePublished: new Date(),
     },
     {
@@ -68,7 +74,7 @@ function getBooks(): Array<Book> {
       description: "1",
       amountOfPages: 12,
       frontCover: "12",
-      authorId: 2,
+      authorId: authors[1].id,
       datePublished: new Date(),
     },
     {
@@ -76,7 +82,7 @@ function getBooks(): Array<Book> {
       description: "1",
       amountOfPages: 12,
       frontCover: "12",
-      authorId: 3,
+      authorId: authors[2].id,
       datePublished: new Date(),
     },
   ];

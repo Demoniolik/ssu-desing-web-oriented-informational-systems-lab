@@ -6,7 +6,7 @@
   "author": "Dmytro Bekker <dimabekker863@gmail.com>",
   "license": "MIT",
   "prisma": {
-    "seed": "node --require esbuild-register seed.ts"
+    "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
     "express": "^4.18.1"
