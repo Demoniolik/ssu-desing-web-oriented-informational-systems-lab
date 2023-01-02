@@ -23,10 +23,10 @@ export const getAllBooks = async (): Promise<BookResponse[]> => {
     });
 }
 
-export const getBookById = async (id: number): Promise<BookResponse | null> => {
-    return db.book.findUnique({
+export const getBookByTitle = async (title: string): Promise<BookResponse | null> => {
+    return db.book.findFirst({
         where: {
-            id,
+            title,
         },
         select: {
             id: true,
@@ -78,3 +78,10 @@ export const createBook = async (book: BookRequest): Promise<BookResponse> => {
         }
     });
 }
+export const deleteBook = async (id: number): Promise<void> => {
+    await db.book.delete({
+        where: {
+            id,
+        },
+    });
+};
