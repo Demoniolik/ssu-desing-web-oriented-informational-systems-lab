@@ -1,14 +1,15 @@
 import expres from "express";
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
-import { createBook, deleteBook, getAllBooks, getBookByTitle } from "../repository/book.repository";
+import { createAuthor, deleteAuthor, getAllAuthors, getAuthorByFullName } from "../repository/author.repository";
 
-export const bookRouter = expres.Router();
 
-bookRouter.get("/",
+export const authorRouter = expres.Router();
+
+authorRouter.get("/",
     async (_request: Request, response: Response) => {
         try {
-            const books = await getAllBooks();
+            const books = await getAllAuthors();
 
             return response
                 .status(HttpStatus.OK)
@@ -20,22 +21,23 @@ bookRouter.get("/",
         }
     });
 
-bookRouter.get("/:title",
+authorRouter.get("/find",
     async (request: Request, response: Response) => {
-        const title = request.params.title;
+        const firstName = request.query.firstName as string;
+        const lastName = request.query.lastName as string;
 
         try {
-            const book = await getBookByTitle(title);
+            const author = await getAuthorByFullName(firstName, lastName);
 
-            if (book) {
+            if (author) {
                 return response
                     .status(HttpStatus.OK)
-                    .json(book);
+                    .json(author);
             }
 
             return response
                 .status(HttpStatus.NOT_FOUND)
-                .json("Book by given title was not found");
+                .json("Author by given first name and last name was not found");
         } catch (error: any) {
             return response
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -43,15 +45,15 @@ bookRouter.get("/:title",
         }
     });
 
-bookRouter.post("/",
+authorRouter.post("/",
     async (request: Request, response: Response) => {
         try {
-            const book = request.body;
-            const createdBook = await createBook(book);
+            const author = request.body;
+            const createdAuthor = await createAuthor(author);
 
             return response
                 .status(HttpStatus.CREATED)
-                .json(createdBook)
+                .json(createdAuthor)
         } catch (error: any) {
             return response
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -59,15 +61,15 @@ bookRouter.post("/",
         }
     });
 
-bookRouter.delete("/:id",
+authorRouter.delete("/:id",
     async (request: Request, response: Response) => {
         const id: number = parseInt(request.params.id);
-        try {
-            await deleteBook(id);
 
+        try {
+            await deleteAuthor(id);
             return response
                 .status(204)
-                .json("Book was successfully deleted");
+                .json("Author was successfully deleted");
         } catch (error: any) {
             return response
                 .status(500)
